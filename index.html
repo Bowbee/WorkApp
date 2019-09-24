@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -10,10 +11,72 @@ node1 = ["Test Text 1",false];
 node2 = ["Test Text 2",false];
 data = [node1,
 	];
+var template1_1 = "<div class='col-8 m-0 p-0 m-auto bg-dark'>"
 var contentDiv;
 $( document ).ready(function() {
     contentDiv = $("#container");
 });
+
+function toggleDiv(e, subDiv){
+	console.log(subDiv);
+    $("#"+subDiv+"_sub").toggle();
+    var prt = $(e.target);
+    var cld = $(e.target).children('i').eq(0);
+    if(prt.hasClass("bg-success")){
+    	prt.removeClass("bg-success");
+    	prt.addClass("bg-secondary");
+
+      	cld.addClass("fa-check");
+        cld.removeClass("fa-arrow-down");
+    }
+    else{
+    	prt.removeClass("bg-secondary");
+    	prt.addClass("bg-success");
+      	cld.addClass("fa-arrow-down");
+        cld.removeClass("fa-check");
+
+    }
+    
+  	var bigDiv = $("#"+subDiv);
+    console.log(bigDiv);
+    if(bigDiv.hasClass("bg-success")){
+    	bigDiv.removeClass("bg-success");
+        bigDiv.addClass("bg-secondary");
+        return;
+    }
+    
+    else{
+    	bigDiv.removeClass("bg-secondary");
+        bigDiv.addClass("bg-success");
+        return;
+    }
+    
+    if(bigDiv.hasClass("bg-warning")){
+    	bigDiv.removeClass("bg-warning");
+        bigDiv.addClass("bg-secondary");
+        return;
+    }
+    
+    else{
+    	bigDiv.removeClass("bg-secondary");
+        bigDiv.addClass("bg-warning");
+        return;
+    }
+    
+    if(bigDiv.hasClass("bg-danger")){
+    	bigDiv.removeClass("bg-danger");
+        bigDiv.addClass("bg-secondary");
+        return;
+    }
+    
+    else{
+    	bigDiv.removeClass("bg-secondary");
+        bigDiv.addClass("bg-danger");
+        return;
+    }
+
+
+};
 
 </script>
 <title>Page Title</title>
@@ -24,12 +87,64 @@ body {
   color: white;
   font-family: Arial, Helvetica, sans-serif;
 }
+.fa{
+  font-size: 1.25em;
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
 <div id="container" class="container bg-light m-auto p-0">
-  <div class="col-8 m-0 p-0 m-auto bg-dark">
-      <h1>Hello</h1>
+  <div class="col-8 m-0 p-3 m-auto bg-dark rounded">
+      <h1>CHART NAME</h1>
+      <div id="1" class="col-12 mx-0 p-1 m-auto bg-success rounded">
+      	<div class="row p-0 m-0 justify-content-center align-items-center">
+          <div class="col-2"></div>
+          <h2 class="col-8">Default Section</h2>
+          <div class="col-2 m-0 p-0">
+            <div class="row m-0 p-0 justify-content-end ">
+              <button class="btn btn-secondary" onclick="toggleDiv(event,'1')"><i class="fa fa-check text-light" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      	
+        <div id="1_sub" class="col-12 bg-light text-dark rounded">
+        	<p>Here are the steps you should take:<br>&bull; Step One: asdasdasd<br>&bull; Step Two: asdasdasd<br></p>
+        </div>
+      </div>
+      <br>
+      <div id="2" class="col-12 mx-0 p-1 m-auto bg-warning rounded">
+      	<div class="row p-0 m-0 justify-content-center align-items-center">
+          <div class="col-2"></div>
+          <h2 class="col-8">Warning Section</h2>
+          <div class="col-2 m-0 p-0">
+            <div class="row m-0 p-0 justify-content-end ">
+              <button class="btn btn-secondary" onclick="toggleDiv(event,'2')"><i class="fa fa-check text-light" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      	
+        <div id="2_sub" class="col-12 bg-light text-dark rounded">
+        	<p>Here are the steps you should take:<br>&bull; Step One: asdasdasd<br>&bull; Step Two: asdasdasd<br></p>
+        </div>
+      </div>
+      <br>
+      <div id="3" class="col-12 mx-0 p-1 m-auto bg-danger rounded">
+      	<div class="row p-0 m-0 justify-content-center align-items-center">
+          <div class="col-2"></div>
+          <h2 class="col-8">To Be Done Section</h2>
+          <div class="col-2 m-0 p-0">
+            <div class="row m-0 p-0 justify-content-end ">
+              <button class="btn btn-secondary" onclick="toggleDiv(event,'3')"><i class="fa fa-check text-light" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      	
+        <div id="3_sub" class="col-12 bg-light text-dark rounded">
+        	<p>Here are the steps you should take:<br>&bull; Step One: asdasdasd<br>&bull; Step Two: asdasdasd<br></p>
+        </div>
+      </div>
+      <br>
   </div>
 </div>
 
