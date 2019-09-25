@@ -29,7 +29,7 @@ struct3 = {
   options: [["Yes", 1], ["No", 2], ["Maybe", 3]]
 };
 data = [struct1, struct2, struct3];
-sections = [data, data, data];
+sections = [];
 var btnTemplate = `<button class="col p-2 m-0 mx-1 mb-1 btn btn-block btn-secondary">Yes</button>"`;
 var contentDiv;
 $(document).ready(function () {
@@ -72,7 +72,7 @@ function htmlParser() {
         } else {
           var buttonHTML = "";
           item.options.forEach(function (opt, oIndex) {
-            buttonHTML += `<button class="col p-2 m-0 mx-1 mb-1 btn btn-block btn-secondary" onclick="showSection(event, ${opt[1]})">${opt[0]}</button>`;
+            buttonHTML += `<button id=${opt[1]} class="col p-2 m-0 mx-1 mb-1 btn btn-block btn-secondary" onclick="showSection(event, ${opt[1]})">${opt[0]}</button>`;
           });
           out += `<div id="${sIndex}_${index}" class="col-12 mx-0 p-1 my-3 mx-auto ${colors[item.color]} rounded">
 						<div class="row p-0 m-0 justify-content-center align-items-center" onclick="showDiv(event, '${sIndex}_${index}')">
@@ -108,6 +108,21 @@ function htmlParser() {
 ;
 
 function showSection(e, secNum) {
+  var cID = $(e.target);
+  var e = e;
+  var par = cID.parent();
+  var cld = par.find("button");
+  var unchecked = true;
+  cld.each(function(i, itm) {
+    if(itm.classList.contains("active")){
+      $(e.target).removeClass("active");
+      var sname = itm.id;
+      $("#sec_" + sname).toggle();
+      $(itm).removeClass("active");
+      unchecked = false;
+    };
+  });
+
   if ($(e.target).hasClass("active")) {
     $(e.target).removeClass("active");
   } else {
@@ -115,6 +130,8 @@ function showSection(e, secNum) {
   }
 
   $("#sec_" + secNum).toggle();
+  
+
 } //a
 
 
