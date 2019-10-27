@@ -7,29 +7,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script>
+sectionPointer = 0;
+nextPointer = 0;
 colors = {
   "green": "bg-success",
   "yellow": "bg-warning",
-  "red": "bg-danger"
+  "red": "bg-danger",
+  "gray":"bg-secondary",
 };
-struct1 = {
-  heading: "My Heading",
-  color: "green",
-  paraText: `Here are the steps you should take:<br>&bull; Step One: asdasd<br>&bull; Step Two: asdasdasd<br>`
-};
-struct2 = {
-  heading: "My Heading",
-  color: "yellow",
-  paraText: `Here are the steps you should take:<br>&bull; Step One: asdasd<br>&bull; Step Two: asdasdasd<br>`
-};
-struct3 = {
-  heading: "My Heading",
-  color: "red",
-  paraText: `Here are the steps you should take:<br>&bull; Step One: asdasd<br>&bull; Step Two: asdasdasd<br>`,
-  options: [["Yes", 1], ["No", 2], ["Maybe", 3]]
-};
-data = [struct1, struct2, struct3];
-sections = [];
+
+curColour = "gray";
+
+sections = [[]];
 var btnTemplate = `<button class="col p-2 m-0 mx-1 mb-1 btn btn-block btn-secondary">Yes</button>"`;
 var contentDiv;
 $(document).ready(function () {
@@ -103,11 +92,91 @@ function htmlParser() {
     out += "</div>";
   });
   contentDiv.append(out);
+};
+
+function crAddStep(){
+  console.log("Step adding!");
+  var crTitle = $("#crTitle").val();
+  var crPara = $("#crPara").val();
+  var crContainer = $("#crBtnContainer");
+  console.log(crPara);
+  var newStruct = {
+  };
+  if( curBtnCount > 0){
+    crOpt = [];
+    for (i = 1; i < curBtnCount+1; i++) {
+      btnCount += 1;
+      temp = [$(`#crBtnTxt${btnCount}`).val(),btnCount]
+      console.log(temp);
+      crOpt.push(temp);
+      sections.push([]);
+      
+    }
+    newStruct = {
+      heading: crTitle,
+      color: curColour,
+      paraText: `${crPara}`,
+      options: crOpt,
+    };
+    curBtnCount = 0;
+    crContainer.children().remove();
+  }
+  else{
+    newStruct = {
+      heading: crTitle,
+      color: curColour,
+      paraText: `${crPara}`,
+    };
+  }
+
+  if(newStruct.heading != "" && newStruct.paraText != ``){
+    $("#crPara").val("");
+    $("#crTitle").val("");
+    console.log(sections[sectionPointer]);
+    sections[sectionPointer].push(newStruct);
+    refresh();
+  }
+  crSetColour("gray");
 }
 
-;
+var btnCount = 0;
+var curBtnCount = 0;
+
+
+function crAddBtn(e){
+  
+  curBtnCount += 1;
+  var crContext = $(e.target);
+  console.log(crContext);
+  var btnText = `<div id=editBtn${btnCount} class="form-group col-2 p-0 m-1"><input type="text" class="form-control text-center p-2 m-0 btn btn-light" placeholder="${curBtnCount}" id="crBtnTxt${btnCount+curBtnCount}"></div>`
+  crContainer = $("#crBtnContainer");
+  crContainer.append(btnText);
+
+};
+
+function crDelBtn(e){
+  if(curBtnCount > 0){
+    curBtnCount -= 1;
+    var crContext = $(e.target);
+    crContainer = $("#crBtnContainer");
+    crContainer.children().last().remove();
+    console.log(crContext);
+  }
+};
+
+function crSetColour(key){
+  crContainer = $("#edit1");
+  crContainer.removeClass("bg-success");
+  crContainer.removeClass("bg-warning");
+  crContainer.removeClass("bg-danger");
+  crContainer.removeClass("bg-secondary");
+  crContainer.addClass(colors[key]);
+  curColour = key;
+  
+}
 
 function showSection(e, secNum) {
+  sectionPointer = secNum;
   var cID = $(e.target);
   var e = e;
   var par = cID.parent();
@@ -136,7 +205,7 @@ function showSection(e, secNum) {
 
 
 function save() {
-  var fname = $("#name").html() + ".chart";
+  var fname = $("#name").val() + ".chart";
   console.log(fname + ".chart");
   var file = new Blob([JSON.stringify(sections)], {
     type: 'text/plain'
@@ -184,8 +253,16 @@ function readSingleFile(e) {
 
 function refresh() {
   console.log("refreshing");
+  var active = $(".active");
+  ids = [];
+  active.each(function(){
+    ids.push($(this).attr('id'));
+  });
   contentDiv.empty();
   htmlParser();
+  ids.forEach(function(item, index){
+    $(`#${item}`).click();
+  });
 }
 
 function showDiv(e, subDiv) {
@@ -252,6 +329,9 @@ body {
 	color: white;
 	font-family: Arial, Helvetica, sans-serif;
 }
+#name{
+  font-size: 1.25rem;
+}
 .fa{
 	font-size: 1.25em;
 	pointer-events: none;
@@ -265,11 +345,22 @@ body {
 .bg-danger{
 	background-color: #bf2c40 !important;
 }
+.bg-success{
+  background-color: #278b3a !important;
+}
 .bg-lightish{
 	background-color: #dddddd !important;
 }
 .active{
 	background-color: #555555 !important;
+}
+.colorBtn{
+  height: 32px;
+  width: 32px;
+  border-radius: 0px !important;
+}
+#colorBtnCont{
+  border: 3px solid #454545;
 }
 @media (min-width: 576px) {
 	.container{
@@ -301,7 +392,9 @@ body {
 				<button class="btn btn-secondary" onclick="save()"><i class="fa fa-save" aria-hidden="true"></i></button>
 			</div>
 			<div class="col-9 mx-auto p-0">
-				<h2 id="name">CHART NAME</h2>
+          <div class="form-group mx-auto p-0 m-0 col-10">
+            <input type="text" class="form-control text-center font-weight-bold p-0 m-0" placeholder="Chart Name" id="name">
+          </div>
 			</div>
 			<div class="col p-0">
 					<button class="btn btn-secondary" onclick="upload()"><i class="fa fa-upload"></i></button>
@@ -309,39 +402,56 @@ body {
 			</div>
 		</div>
 		<div id="content" class="m-0 p-0">
-        	<div id="edit1" class="col-12 mx-0 p-1 my-3 mx-auto bg-secondary rounded">
-              <div class="row p-0 m-0 justify-content-center align-items-center">
-                <div class="col-2"></div>
-                <div class="form-group p-0 m-0 col-8">
-                	<input type="text" class="form-control text-center font-weight-bold" placeholder="Title" id="usr">
-                </div>
-                <div class="col-2 m-0 p-0">
-                  <div class="row m-0 p-0 justify-content-end ">
-					<button class="btn btn-dark justify-self-end" onclick="delOption(1)"><i class="fa fa-trash text-light" aria-hidden="true"></i></button>
-                  </div>
-                </div>
-              </div>
-              <div id="edit1_sub" class="col-12 my-2 p-3 bg-lightish text-dark rounded">
-              	<div class="form-group m-0">
-              		<textarea class="form-control" rows="5" id="editBox" placeholder="Text here..."></textarea>
-              	</div>
-              </div>
-              <div id="edit1_btns" class="col-12 m-0 p-0">
-                <div id="btnContainer_edit1" class="row m-0 p-0">
-                </div>
-                <div id="btnOption_edit1" class="row m-0 p-0">
-                	<button id="edit1_add" class="col p-2 m-0 mx-1 mb-1 btn btn-block btn-success">Add Option</button>
-                    <button id="edit1_del" class="col p-2 m-0 mx-1 mb-1 btn btn-block btn-danger">Delete Option</button>
-                </div>
-              </div>
-          </div>
+        	
           
 		</div>
         <div id="addSection" class="m-0 p-0">
-        	<div id="add" class="col-12 mx-0 p-1 my-3 mt-5 mx-auto bg-secondary rounded">
+          <div id="edit1" class="col-12 mx-0 p-1 my-3 mx-auto bg-secondary rounded">
+              <div class="row p-0 m-0 justify-content-center align-items-center">
+                
+                <div class="col-3 m-0 p-0">
+                  <div class="row m-0 p-0">
+                    <div id="colorBtnCont" class="row m-0 p-0 rounded mx-auto">
+                      <button class="colorBtn btn btn-secondary" onclick='crSetColour("gray")'></button>
+                      <button class="colorBtn btn btn-success" onclick='crSetColour("green")'></button>
+                      <button class="colorBtn btn btn-warning" onclick='crSetColour("yellow")'></button>
+                      <button class="colorBtn btn btn-danger" onclick='crSetColour("red")'></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group p-0 m-0 col-6">
+                  <input type="text" class="form-control text-center font-weight-bold" placeholder="Title" id="crTitle">
+                </div>
+
+                <div class="col-3 m-0 p-0 ">
+                  <div class="row m-0 p-0 justify-content-end">
+                    <button class="btn btn-dark justify-self-end" onclick="clearCreation()"><i class="fa fa-trash text-light" aria-hidden="true"></i></button>
+                  </div>
+                </div>
+
+              </div>
+
+              <div id="edit1_sub" class="col-12 my-2 p-3  text-dark rounded">
+                <div class="form-group m-0 bg-lightish">
+                  <textarea class="form-control bg-lightish" rows="5" id="crPara" placeholder="Text here..."></textarea>
+                </div>
+              </div>
+              <div id="edit1_btns" class="col-12 m-0 p-0">
+                <div class="row p-0 m-0 justify-content-center" id="crBtnContainer">
+                  </div>
+                <div id="btnOption_edit1" class="row m-0 p-0">
+                  <button id="edit1_add" class="col p-2 m-0 mx-1 mb-1 btn btn-block btn-success" onclick="crAddBtn(event)">Add Option</button>
+                  
+                  <button id="edit1_del" class="col p-2 m-0 mx-1 mb-1 btn btn-block btn-danger" onclick="crDelBtn(event)">Delete Option</button>
+                </div>
+                
+              </div>
+          </div>
+        	<div id="add" class="col-12 mx-0 p-1  mt-3 mx-auto rounded">
               <div id="addBtns" class="col-12 m-0 p-0">
                 <div id="addBtns_s1" class="row m-0 p-0">
-                	<button id="addBtn_add" class="col p-2 m-0 mx-1 mb-1 btn btn-block btn-success">Add Step</button>
+                	<button id="addBtn_add" class="col-2 mx-auto p-2 m-0 mx-1 mb-1 btn btn btn-success" onclick="crAddStep()">Add Step</button>
                 </div>
               </div>
           </div>
